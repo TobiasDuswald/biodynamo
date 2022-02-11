@@ -399,7 +399,11 @@ inline void RunSortAndForEachAgentParallel(uint64_t num_agent_per_type) {
 }
 
 inline void RunSortAndForEachAgentParallel() {
+#ifdef BDM_USE_OMP
   int num_threads = omp_get_max_threads();
+#else
+  int num_threads = 1;
+#endif  // BDM_USE_OMP
   std::vector<int> num_agent_per_type = {std::max(1, num_threads - 1),
                                          num_threads, 3 * num_threads,
                                          3 * num_threads + 1};
@@ -463,7 +467,7 @@ struct CheckNumaThreadErrors : Functor<void, Agent*, AgentHandle> {
     for (int i = 0; i < 10000; i++) {
       d += std::sin(i);
     }
-    if (handle.GetNumaNode() != ti_->GetNumaNode(omp_get_thread_num())) {
+    if (handle.GetNumaNode() != ti_->GetNumaNode(ti_->GetMyThreadId())) {
       numa_thread_errors++;
     }
   }
@@ -513,8 +517,7 @@ inline void CheckForEachAgentDynamic(ResourceManager* rm,
                          (2 * num_agent_per_type));
     // work stealing can cause thread errors. This check ensures that at least
     // 75% of the work is done by the correct CPU-Memory mapping.
-    if (num_agent_per_type >
-        20 * static_cast<uint64_t>(omp_get_max_threads())) {
+    if (num_agent_per_type > 20 * static_cast<uint64_t>(ti->GetMaxThreads())) {
       EXPECT_GT(num_agent_per_type / 4,
                 check_numa_thread_functor.numa_thread_errors.load());
     }
@@ -567,7 +570,11 @@ inline void RunSortAndForEachAgentParallelDynamic(uint64_t num_agent_per_type,
 }
 
 inline void RunSortAndForEachAgentParallelDynamic() {
+#ifdef BDM_USE_OMP
   int num_threads = omp_get_max_threads();
+#else
+  int num_threads = 1;
+#endif  // BDM_USE_OMP
   std::vector<int> num_agent_per_type = {std::max(1, num_threads - 1),
                                          num_threads, 3 * num_threads,
                                          3 * num_threads + 1};
