@@ -47,12 +47,12 @@ jobs:
           echo "$HOME/.sonar/build-wrapper-linux-x86" >> $GITHUB_PATH
       - name: Install dependencies
         run: |
-        sudo apt-get update
-        sudo apt-get install -y libopenmpi-dev libomp5 libomp-dev libnuma-dev freeglut3-dev \
-          libreadline-dev libsqlite3-dev tk-dev python-openssl ninja-build libblas-dev liblapack-dev
-        curl -L -O https://github.com/Kitware/CMake/releases/download/v3.19.3/cmake-3.19.3-Linux-x86_64.sh
-        chmod +x cmake-3.19.3-Linux-x86_64.sh
-        sudo ./cmake-3.19.3-Linux-x86_64.sh --skip-license --prefix=/usr/local
+          sudo apt-get update
+          sudo apt-get install -y libopenmpi-dev libomp5 libomp-dev libnuma-dev freeglut3-dev \
+            libreadline-dev libsqlite3-dev tk-dev python-openssl ninja-build libblas-dev liblapack-dev
+          curl -L -O https://github.com/Kitware/CMake/releases/download/v3.19.3/cmake-3.19.3-Linux-x86_64.sh
+          chmod +x cmake-3.19.3-Linux-x86_64.sh
+          sudo ./cmake-3.19.3-Linux-x86_64.sh --skip-license --prefix=/usr/local
       - name: Start Xvfb
         run: |
           set -e
@@ -63,14 +63,14 @@ jobs:
           sleep 3
       - name: Install pyenv dependency
         run: |
-        if [ ! -f "$HOME/.pyenv/bin/pyenv" ]; then
-          curl https://pyenv.run | bash
-        fi
-        export PATH="$HOME/.pyenv/bin:$PATH"
-        eval "$(pyenv init --path)"
-        eval "$(pyenv init -)"
-        PYTHON_CONFIGURE_OPTS="--enable-shared" pyenv install 3.9.1
-        pyenv shell 3.9.1
+          if [ ! -f "$HOME/.pyenv/bin/pyenv" ]; then
+            curl https://pyenv.run | bash
+          fi
+          export PATH="$HOME/.pyenv/bin:$PATH"
+          eval "$(pyenv init --path)"
+          eval "$(pyenv init -)"
+          PYTHON_CONFIGURE_OPTS="--enable-shared" pyenv install 3.9.1
+          pyenv shell 3.9.1
       - name: Run build-wrapper
         run: |
           export PATH="$HOME/.pyenv/bin:$PATH"
